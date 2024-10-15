@@ -1,4 +1,6 @@
- <nav class="navbar">
+ {% load static %}
+
+<nav class="navbar">
         <div class="container">
             <div class="logo">
                 <!-- Link to Home Page -->
@@ -25,7 +27,7 @@
                     <li class="nav-item">
 
                         <!-- Link to Add Photo Page -->
-                        <a href="{% url 'add-photo' %}">
+                        <a href="{% url 'photo-add' %}">
                             <i>Add Photo</i>
                         </a>
                     </li>
