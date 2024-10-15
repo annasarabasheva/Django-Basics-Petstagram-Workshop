@@ -1,5 +1,6 @@
+{% load static %}
 
-    <div class="card">
+<div class="card">
         <div class="top">
             <!-- User Details and image location -->
             <div class="userDetails">
@@ -23,6 +24,25 @@
                     {% if photo.location %}
                         <span>{{ photo.location}}</span>
                     {% endif %}
+
+                    {% if photo_page %}
+
+                    <div class="edit-delete-btns">
+
+                        <a href="{% url 'photo-edit' photo.pk %}">
+                            <img class="edit-img" src="{% static '/images/edit-pen-icon-6.jpg' %}"
+                                 alt="edit button">
+                        </a>
+
+                        <a href="#">
+                            <img class="bin-img" src="{% static '/images/icon-remove-22.jpg' %}"
+                                 alt="bin button">
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
                 </h3>
             </div>
             <!--  -->
@@ -67,14 +87,44 @@
                     </p>
                 </a>
             {% endfor %}
-            <!-- End Tagged Pets -->
 
+             {% if photo_page %}
+                <p class="pet-details">{{ photo.description }}</p>
+            {% else %}
+                <a href="{% url 'photo-details' photo.pk %}">
+                    <h4 class="details">See details</h4>
+                </a>
+            {% endif %}
 
-            <a href="{% url 'photo-details' photo.pk %}">
-                <h4 class="details">See details</h4>
-            </a>
 
             <h5 class="postTime">{{ photo.date_of_publucation}}</h5>
+
+            {% if photo_page %}
+                {% for comment in comments %}
+                    <div class="comments">
+                        <div class="top">
+                            <div class="userDetails">
+                                <div class="comment-data">
+                                    <div class="profilepic">
+                                        <div class="profile_img">
+                                            <div class="image">
+                                                <img src="{% static 'images/person.png' %}" alt="img8">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p>
+
+                                        <a href="">Steven Ivanov</a>
+                                        {{ comment.text }}
+                                    </p>
+                                </div>
+                                <span>{{ comment.date_time_of_publication }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% endif %}
 
             <!-- add comments section -->
             <div class="addComments">
