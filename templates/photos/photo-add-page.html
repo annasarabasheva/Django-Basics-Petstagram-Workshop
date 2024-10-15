@@ -7,7 +7,7 @@
         <!-- Start Add Photo Form -->
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form }}
+            {{ form.as_p }}
             <!-- Add Photo Button -->
             <button class="add-btn" type="submit">Add Photo</button>
         </form>
