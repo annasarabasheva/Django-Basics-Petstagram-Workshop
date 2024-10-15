@@ -1,14 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.shortcuts import render
 
 from petstagram.pets.models import Pet
+from petstagram.pets.forms import PetAddForm
 
 
 def pet_add_page(request):
-    return render(request, 'pets/pet-add-page.html')
+    form = PetAddForm(request.POST or None)
 
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('profile-details', pk=1)
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, 'pets/pet-add-page.html', context)
 
 def pet_edit_page(request, username: str, pet_slug: str):
     return render(request, 'pets/pet-edit-page.html')
