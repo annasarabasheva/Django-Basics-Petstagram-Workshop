@@ -37,6 +37,11 @@ def photo_edit_page(request, pk: int):
     return render(request, 'photos/photo-edit-page.html', context)
 
 
+def photo_delete(request, pk: int):
+    Photo.objects.get(pk=pk).delete()
+    return redirect('home')
+
+
 def photo_details_page(request, pk: int):
     photo = Photo.objects.get(pk=pk)
     likes = photo.like_set.all()
