@@ -1,4 +1,5 @@
 {% extends 'common/base.html' %}
+{% load static %}
 
 {% block content %}
     <div class="container">
@@ -8,12 +9,13 @@
             <form class="searchbar" method="post">
                 <input type="text" placeholder="Search by pet name...">
                 <button>
-                    <img src="/static/images/search.png" height="18" alt="img2">
+                    <img src="{% static '/images/search.png' %}" height="18" alt="img2">
                 </button>
             </form>
             <!-- End Searchbar Form -->
-
-           {% include 'common/pet-posts.html' %}
+            {% for photo in all_photos %}
+                {% include 'common/pet-posts.html' %}
+            {% endfor %}
 
         </div>
     </div>
