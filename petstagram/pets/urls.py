@@ -7,6 +7,6 @@ urlpatterns = [
     path('<str:username>/pet/<slug:pet_slug>/', include([
         path('', views.PetDetailsPage.as_view(), name='pet-details'),
         path('edit/', views.PetEditPage.as_view(), name='edit-pet'),
-        path('delete/', views.pet_delete_page, name='delete-pet'),
+        path('delete/', views.PetDeletePage.as_view(), name='delete-pet'),
     ]))
 ]
