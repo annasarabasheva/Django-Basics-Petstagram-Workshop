@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
 
-# Create your views here.
+
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 from petstagram.common.forms import CommentForm
 from petstagram.pets.models import Pet
 from petstagram.pets.forms import PetAddForm, PetEditForm, PetDeleteForm
 
+""" FBV:
 
 def pet_add_page(request):
     form = PetAddForm(request.POST or None)
@@ -21,6 +24,14 @@ def pet_add_page(request):
     }
 
     return render(request, 'pets/pet-add-page.html', context)
+"""
+
+
+class PetAddPage(CreateView): # CBV version of pet_add_page view
+    model = Pet
+    form_class = PetAddForm
+    template_name = 'pets/pet-add-page.html'
+    success_url = reverse_lazy('profile-details', kwargs={'pk': 1})
 
 
 def pet_edit_page(request, username: str, pet_slug: str):
