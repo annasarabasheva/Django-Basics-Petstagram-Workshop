@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 
 from petstagram.common.forms import CommentForm
 from petstagram.pets.models import Pet
@@ -67,6 +67,7 @@ def pet_delete_page(request, username: str, pet_slug: str):
     return render(request, 'pets/pet-delete-page.html', context)
 
 
+""" FBV:
 def pet_details_page(request, username: str, pet_slug: str):
     pet = Pet.objects.get(slug=pet_slug)
     all_photos = pet.photo_set.all()
@@ -80,3 +81,16 @@ def pet_details_page(request, username: str, pet_slug: str):
     }
 
     return render(request, 'pets/pet-details-page.html', context)
+"""
+
+
+class PetDetailsPage(DetailView): # CBV version of pet_details_page view
+    model = Pet
+    template_name = 'pets/pet-details-page.html'
+    slug_url_kwarg = 'pet_slug'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_photos'] = context['pet'].photo_set.all()
+        context['comment_form'] = CommentForm()
+        return context
