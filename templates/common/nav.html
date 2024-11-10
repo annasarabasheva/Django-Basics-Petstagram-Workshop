@@ -31,7 +31,7 @@
                             <i>Add Photo</i>
                         </a>
                     </li>
-
+                    {% if not request.user.is_authenticated %}
                     <li class="nav-item">
 
                         <!-- Link to Login Page -->
@@ -46,6 +46,7 @@
                             <i>Register</i>
                         </a>
                     </li>
+                    {% else %}
                     <li class="nav-item">
 
                         <!-- Link to Profile Page -->
@@ -58,6 +59,8 @@
                         {% csrf_token %}
                         <button class="button" type="submit"><i>Logout</i></button>
                     </form>
+
+                    {% endif %}
                 </ul>
             </div>
         </div>
