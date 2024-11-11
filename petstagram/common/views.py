@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, resolve_url
 from django.views.generic import ListView
@@ -59,15 +60,17 @@ class HomePage(ListView):
 #     return render(request, 'common/home-page.html', context)
 
 
+@login_required
 def likes_functionality(request, photo_id: int):
     liked_object = Like.objects.filter(
-        to_photo_id=photo_id
+        to_photo_id=photo_id,
+        user=request.user
     ).first()
 
     if liked_object:
         liked_object.delete()
     else:
-        like = Like(to_photo_id=photo_id)
+        like = Like(to_photo_id=photo_id, user=request.user)
         like.save()
 
     return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')
@@ -79,7 +82,7 @@ def share_functionality(request, photo_id: int):
 
     return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')
 
-
+@login_required
 def comment_functionality(request, photo_id: int):
     if request.POST:
         photo = Photo.objects.get(pk=photo_id)
@@ -88,6 +91,7 @@ def comment_functionality(request, photo_id: int):
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.to_photo = photo
+            comment.user = request.user
             comment.save()
 
         return redirect(request.META.get('HTTP_REFERER') + f'#{photo_id}')

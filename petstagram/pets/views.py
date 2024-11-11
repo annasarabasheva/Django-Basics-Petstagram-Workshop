@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 
 
@@ -27,11 +28,23 @@ def pet_add_page(request):
 """
 
 
-class PetAddPage(CreateView): # CBV version of pet_add_page view
+class PetAddPage(LoginRequiredMixin, CreateView):
     model = Pet
     form_class = PetAddForm
     template_name = 'pets/pet-add-page.html'
-    success_url = reverse_lazy('profile-details', kwargs={'pk': 1})
+
+    def form_valid(self, form):
+        pet = form.save(commit=False)
+        pet.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'profile-details',
+            kwargs={
+                'pk': self.request.user.pk,
+            }
+        )
 
 
 """ FBV:
