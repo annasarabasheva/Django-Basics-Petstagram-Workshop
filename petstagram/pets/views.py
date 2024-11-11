@@ -159,4 +159,12 @@ class PetDetailsPage(LoginRequiredMixin, DetailView): # CBV version of pet_detai
         context = super().get_context_data(**kwargs)
         context['all_photos'] = context['pet'].photo_set.all()
         context['comment_form'] = CommentForm()
+
+        all_photos = context['pet'].photo_set.all()
+
+        for photo in all_photos:
+            photo.has_liked = photo.like_set.filter(user=self.request.user).exists()
+
+        context['all_photos'] = all_photos
+
         return context
