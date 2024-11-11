@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -21,7 +22,7 @@ class PhotoAddPage(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PhotoEditPage(UpdateView):
+class PhotoEditPage(LoginRequiredMixin, UpdateView):
     model = Photo
     form_class = PhotoEditForm
     template_name = 'photos/photo-edit-page.html'
@@ -30,7 +31,7 @@ class PhotoEditPage(UpdateView):
         return reverse_lazy('photo-details', kwargs={'pk': self.object.pk})
 
 
-class PhotoDetailsView(DetailView):
+class PhotoDetailsView(LoginRequiredMixin, DetailView):
     model = Photo
     template_name = 'photos/photo-details-page.html'
 
@@ -40,10 +41,12 @@ class PhotoDetailsView(DetailView):
         context['likes'] = self.object.like_set.all()
         context['comments'] = self.object.comment_set.all()
         context['comment_form'] = CommentForm()
+        self.object.has_liked = self.object.like_set.filter(user=self.request.user).exists()
 
         return context
 
 
+@login_required
 def photo_delete(request, pk: int):
     Photo.objects.get(pk=pk).delete()
     return redirect('home')

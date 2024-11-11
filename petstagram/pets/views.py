@@ -1,6 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
-
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -66,11 +65,15 @@ def pet_edit_page(request, username: str, pet_slug: str):
 """
 
 
-class PetEditPage(UpdateView): # CBV version of pet_edit_page view
+class PetEditPage(LoginRequiredMixin, UserPassesTestMixin, UpdateView): # CBV version of pet_edit_page view
     model = Pet
     template_name = 'pets/pet-edit-page.html'
     form_class = PetEditForm
     slug_url_kwarg = 'pet_slug'
+
+    def test_func(self):
+        pet = get_object_or_404(Pet, slug=self.kwargs['pet_slug'])
+        return self.request.user == pet.user
 
     def get_success_url(self):
         return reverse_lazy(
@@ -100,12 +103,23 @@ def pet_delete_page(request, username: str, pet_slug: str):
 """
 
 
-class PetDeletePage(DeleteView): # CBV version of pet_delete_view
+class PetDeletePage(LoginRequiredMixin, UserPassesTestMixin, DeleteView): # CBV version of pet_delete_view
     model = Pet
     template_name = 'pets/pet-delete-page.html'
     slug_url_kwarg = 'pet_slug'
     form_class = PetDeleteForm
-    success_url = reverse_lazy('profile-details', kwargs={'pk': 1})
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'profile-details',
+            kwargs={
+                'pk': self.request.user.pk,
+            }
+        )
+
+    def test_func(self):
+        pet = get_object_or_404(Pet, slug=self.kwargs['pet_slug'])
+        return self.request.user == pet.user
 
     def get_initial(self) -> dict:
         return self.get_object().__dict__
@@ -136,7 +150,7 @@ def pet_details_page(request, username: str, pet_slug: str):
 """
 
 
-class PetDetailsPage(DetailView): # CBV version of pet_details_page view
+class PetDetailsPage(LoginRequiredMixin, DetailView): # CBV version of pet_details_page view
     model = Pet
     template_name = 'pets/pet-details-page.html'
     slug_url_kwarg = 'pet_slug'
